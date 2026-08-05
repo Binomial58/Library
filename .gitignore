@@ -1,0 +1,11 @@
+# Local build and test artifacts
+a.out
+*.tmp
+*.tmp.err
+
+# Third-party code kept locally for reference/reuse but not republished here:
+# unofficial copy of github.com/cozysauna/competitive-programming-python,
+# no LICENSE file upstream (all-rights-reserved by default) and no
+# attribution in the copied files. Keep using it locally; replace pieces
+# with our own rewritten implementations under python/ as they're done.
+/python/competitive-programming-python/
