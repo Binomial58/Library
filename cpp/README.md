@@ -30,6 +30,7 @@
 ## Geometry
 
 - [Geometry](./geometry/geometry.md)
+- [Polar Angle Sort](./geometry/polar_angle_sort.md)
 
 ## Graph
 
