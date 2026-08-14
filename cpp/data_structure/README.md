@@ -2,7 +2,7 @@
 
 データ構造系のライブラリです。
 
-- [UnionFind](./UnionFind.md)
+- [UnionFind](./union_find.md)
 - [Fenwick Tree](./fenwick_tree.md)
 - [Segtree](./segtree.md)
 - [Lazy Segtree](./lazy_segtree.md)
