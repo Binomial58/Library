@@ -158,6 +158,18 @@ int main() {
 }
 ```
 
+### 計算量
+
+`mod` を法として、以下 `M = mod` とする。
+
+- コンストラクタ、`val()`、`operator++`/`operator--`、`operator+=`/`operator-=`、`operator+`/`operator-`、`operator==`/`operator!=`：`O(1)`
+- `operator*=`/`operator*`：`O(1)`（固定 mod は乗算+剰余、動的 mod は Barrett reduction）
+- `pow(n)`：`O(log n)`（二分累乗）
+- `inv()`：`O(log M)`（固定 mod かつ `M` が素数のときはFermatの小定理で `pow(M-2)`、それ以外は拡張ユークリッドの互除法）
+- `operator/=`/`operator/`：内部で `inv()` を呼ぶため `O(log M)`
+- `Binomial<Mint>::ensure(n)`：初回呼び出しやテーブル拡張が必要なときは `O(n)`（末尾で1回 `inv()` を呼ぶので `O(n + log M)` だが `n` が支配的）。既に `n` まで計算済みなら `O(1)`
+- `Binomial<Mint>::C` / `P` / `H`：内部で `ensure` を呼ぶため、初回・拡張時は `O(n)`、以降は `O(1)`
+
 ### 注意
 
 - `Modint`（動的 mod）は `set_mod` を呼ぶ前に使わない。

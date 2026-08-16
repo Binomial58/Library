@@ -161,6 +161,34 @@ std::vector<Segment> merge_segments(std::vector<Segment> segs);
 
 `segment_arrangement` は交点を頂点とするグラフを組み、`ps` に頂点集合を返す。
 
+### 計算量
+
+特記のない関数はすべて `O(1)`。
+
+**基本関数・交差判定・射影反射距離・円**
+
+`sgn`, `eq`, `dot`, `cross`, `norm2`, `rotate90`, `rotate`, `ccw`,
+`is_intersect_lp/ll/ls/ss/sp`,
+`projection`, `reflection`, `dist_lp/ll/ls/sp/ss`, `crosspoint_ll`,
+`dist_lc/sc/cc`, `crosspoint_lc/cc`, `tangent_points`, `tangent_lines`, `circumcenter`, `circles_points_radius`
+
+— いずれも `O(1)`。
+
+**多角形**（`n` はその関数に渡す点列のサイズ）
+
+- `convex_hull(ps)`: `O(n log n)`（ソート + Andrew のモノトーンチェーン法）
+- `is_ccw_convex(ps)` / `in_convex(p, ps)` / `in_polygon(ps, p)` / `convex_cut(ps, a1, a2)` / `convex_diameter(ps)` / `area(ps)` / `centroid(ps)`: `O(n)`
+  - `in_convex`・`convex_diameter` は `ps` が凸多角形（反時計回り）であることが前提
+- `in_ccw_convex(ps, p)`: `O(log n)`。`ps` が凸多角形（反時計回り）であることを前提にした二分探索
+- `minimum_enclosing_circle(ps)`: `O(n)`（定数倍が大きい: `39 × 50 = 1950` 回の反復で中心を動かす近似解法。Welzl の乱択増分法のような厳密アルゴリズムではないので、精度は反復回数に依存する）
+- `voronoi_cell(p, sites, outer)`: 目安 `O(|sites| * (|outer| + |sites|))`。サイトごとに `convex_cut` を1回呼び、セルの頂点数は切断のたびに高々定数個ずつ増える
+
+**幾何グラフ・補助**
+
+- `segment_arrangement(segs, ps)`: 目安 `O(n^3)`（`n = segs.size()`）。全ペアの交点計算に `O(n^2)`、その後、各線分について交点候補（最大 `O(n^2)` 個）を線形走査するため。線分数が増えると重くなるので注意
+- `visibility_graph(ps, objs)`: `O(n^2 * V)`（`n = ps.size()`、`V` は `objs` に含まれる頂点数の合計）。全点ペアについて、各障害物の内外判定・辺との交差判定（いずれも `O(|obj|)`）を行う
+- `merge_segments(segs)`: `O(n^2)`（`n = segs.size()`）。全ペアを比較し、併合できたペアはその場で詰めて再走査する
+
 ### 典型コード
 
 線分交差:
