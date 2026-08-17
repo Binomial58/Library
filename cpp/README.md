@@ -5,6 +5,7 @@
 ## Data Structure
 
 - [UnionFind](./data_structure/union_find.md)
+- [WeightedUnionFind](./data_structure/weighted_union_find.md)
 - [Fenwick Tree](./data_structure/fenwick_tree.md)
 - [Segtree](./data_structure/segtree.md)
 - [Lazy Segtree](./data_structure/lazy_segtree.md)
