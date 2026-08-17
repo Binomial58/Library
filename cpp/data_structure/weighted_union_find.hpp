@@ -8,14 +8,11 @@ template <class W = long long>
 class WeightedUnionFind
 {
 public:
-    // n要素の重み付きUnion-Findを作る（0-indexed）。各要素は最初バラバラの集合。
+    // n要素の重み付きUnion-Findを作る（0-indexed）
     WeightedUnionFind() = default;
     explicit WeightedUnionFind(int n) : parent_or_size_(n, -1), weight_(n, W(0)) {}
 
     // xの根（代表）を返す（経路圧縮あり）
-    // 経路圧縮の際、weight_[x]（xから直接の親までの差分）は、
-    // 親を根まで圧縮し終えたあと（=weight_[親]が根からの差分に更新されたあと）に加算する。
-    // 先にweight_[x]を確定させてしまうと、祖父より上の分がズレたまま反映されないので注意。
     int find(int x)
     {
         if (parent_or_size_[x] < 0)
@@ -27,7 +24,7 @@ public:
         return r;
     }
 
-    // X_x - X_{find(x)} を返す（xを圧縮したうえで求める）
+    // X_x - X_{find(x)} を返す
     W weight(int x)
     {
         find(x);
@@ -40,25 +37,17 @@ public:
         return find(a) == find(b);
     }
 
-    // X_a - X_b = w という制約を追加する。
-    // 矛盾がなければtrue（新規併合でも、既存の関係と整合していただけでもtrue）。
-    // 矛盾していればfalseで何も変更しない。
-    //
-    // 実装上の注意：a, bを根のインデックスで上書きする前に weight(a), weight(b) を
-    // 呼んで元のa, bの「根から見た差分」を控えておくこと。先に a = find(a); b = find(b);
-    // としてしまうと、a == bになった場合に元の情報が失われ、常に差分0と比較してしまう。
+    // X_a - X_b = w という制約を追加する（矛盾すればfalseで何も変更しない）
     bool unite(int a, int b, W w)
     {
-        const W wa = weight(a); // X_a - X_{root(a)}
-        const W wb = weight(b); // X_b - X_{root(b)}
+        const W wa = weight(a);
+        const W wb = weight(b);
         int ra = find(a);
         int rb = find(b);
         if (ra == rb)
-            return wa - wb == w; // X_a - X_b = wa - wb がwと矛盾しないか
+            return wa - wb == w;
 
-        // X_a - X_b = w より X_{ra} - X_{rb} = w - wa + wb
-        W d = w - wa + wb;
-        // union by size (negative size)。付け替える側（小さい木の根）にdの符号を反転して代入する。
+        W d = w - wa + wb; // X_{ra} - X_{rb}
         if (parent_or_size_[ra] > parent_or_size_[rb])
         {
             std::swap(ra, rb);

@@ -45,7 +45,7 @@ namespace sieve_lib
                     primes_.push_back(x);
             }
 
-            // 最小素因数（SPF）: is_prime_ / primes_ とは独立に計算する
+            // 最小素因数（SPF）
             spf_.assign(max_n_ + 1, 0);
             for (ll p : primes_)
             {
@@ -77,8 +77,7 @@ namespace sieve_lib
             return max_n_;
         }
 
-        // x（2 <= x <= max_n）の最小の素因数を返す。O(1)。
-        // 範囲外・x < 2 のときは 0 を返す。
+        // xの最小の素因数を返す（範囲外・x < 2 は0）
         int smallest_prime_factor(ll x) const
         {
             if (x < 2 || x > max_n_)
@@ -86,9 +85,7 @@ namespace sieve_lib
             return spf_[static_cast<std::size_t>(x)];
         }
 
-        // x（1 <= x <= max_n）を素因数分解し、(素数, 指数) のペアを素数の昇順で返す。
-        // x == 1 のときは空の配列。範囲外（x < 1 または x > max_n）も空の配列を返す。
-        // O(log x)。
+        // xを素因数分解し、(素数, 指数) のペアを昇順で返す（x==1・範囲外は空）
         std::vector<std::pair<ll, int>> factorize(ll x) const
         {
             std::vector<std::pair<ll, int>> res;
@@ -109,7 +106,7 @@ namespace sieve_lib
             return res;
         }
 
-        // x（1 <= x <= max_n）の約数を昇順で列挙する。factorize を利用する。
+        // xの約数を昇順で列挙する
         std::vector<ll> divisors(ll x) const
         {
             std::vector<ll> res;
