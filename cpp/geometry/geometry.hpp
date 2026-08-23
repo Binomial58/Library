@@ -22,20 +22,20 @@ struct Circle
     Real radius;
 };
 
-struct Edge
+struct GeoEdge
 {
     int from;
     int to;
     Real cost;
 };
 
-struct Graph
+struct GeoGraph
 {
     int n;
-    std::vector<std::vector<Edge>> edges;
+    std::vector<std::vector<GeoEdge>> edges;
 
-    Graph() = default;
-    explicit Graph(int n) : n(n), edges(n) {}
+    GeoGraph() = default;
+    explicit GeoGraph(int n) : n(n), edges(n) {}
 
     void add_edge(int from, int to, Real cost)
     {
@@ -536,7 +536,7 @@ inline Polygon voronoi_cell(Point p, const Polygon &sites, const Polygon &outer)
     return cell;
 }
 
-inline Graph segment_arrangement(const std::vector<Segment> &segs, Polygon &ps)
+inline GeoGraph segment_arrangement(const std::vector<Segment> &segs, Polygon &ps)
 {
     const int n = static_cast<int>(segs.size());
     for (int i = 0; i < n; ++i)
@@ -553,7 +553,7 @@ inline Graph segment_arrangement(const std::vector<Segment> &segs, Polygon &ps)
     std::sort(ps.begin(), ps.end(), point_less);
     ps.erase(std::unique(ps.begin(), ps.end(), [](Point a, Point b) { return eq(a, b); }), ps.end());
 
-    Graph gr(static_cast<int>(ps.size()));
+    GeoGraph gr(static_cast<int>(ps.size()));
     std::vector<std::pair<Real, int>> order;
     for (int i = 0; i < n; ++i)
     {
@@ -574,10 +574,10 @@ inline Graph segment_arrangement(const std::vector<Segment> &segs, Polygon &ps)
     return gr;
 }
 
-inline Graph visibility_graph(const Polygon &ps, const std::vector<Polygon> &objs)
+inline GeoGraph visibility_graph(const Polygon &ps, const std::vector<Polygon> &objs)
 {
     const int n = static_cast<int>(ps.size());
-    Graph gr(n);
+    GeoGraph gr(n);
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < i; ++j)

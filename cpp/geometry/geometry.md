@@ -222,12 +222,14 @@ enum Containment { OUT = 0, IN = 1, ON = 2 };
 ### 幾何グラフ・補助
 
 ```cpp
-Graph segment_arrangement(const std::vector<Segment>& segs, Polygon& ps);
-Graph visibility_graph(const Polygon& ps, const std::vector<Polygon>& objs);
+GeoGraph segment_arrangement(const std::vector<Segment>& segs, Polygon& ps);
+GeoGraph visibility_graph(const Polygon& ps, const std::vector<Polygon>& objs);
 std::vector<Segment> merge_segments(std::vector<Segment> segs);
 ```
 
 `segment_arrangement` は交点を頂点とするグラフを組み、`ps` に頂点集合を返す。
+
+`GeoGraph`/`GeoEdge` は幾何用の重み付きグラフ型（`edges[v]` に `GeoEdge{from, to, cost}` を持つ）。テンプレートのグローバルな `Graph`/`WeightedGraph` とは別物で、`using namespace geometry;` しても衝突しない。
 
 ### 計算量
 
