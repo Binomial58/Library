@@ -35,6 +35,74 @@ struct Circle {
 };
 ```
 
+### Point の宣言方法
+
+`Point` は `namespace geometry` の中で定義された型なので、そのまま `Point p(x, y);` と書くとコンパイルエラーになる（`error: 'Point' was not declared in this scope`）。次のどちらかが必要。
+
+```cpp
+// 方法1: using namespace で名前空間ごと持ち込む（ファイルの先頭などで1回書く）
+using namespace geometry;
+Point p(1, 2);
+
+// 方法2: 毎回 geometry:: を付けて明示する（using namespace を書きたくない場合）
+geometry::Point p(1, 2);
+```
+
+どちらか一方があればよく、両方書く必要はない。`using namespace geometry;` を書いた後は、`Point` だけでなく `Line` や `Segment`、`ccw` や `dist_sp` などの関数も `geometry::` なしで使えるようになる。
+
+**座標の取り出し方**
+
+`Point` の実体は `std::complex<Real>`（`Real = double`）なので、メンバは `.x`/`.y` ではなく、`std::complex` の `.real()`/`.imag()` を使う。
+
+```cpp
+Point p(3, 4);
+double x = p.real(); // 3
+double y = p.imag(); // 4
+```
+
+**整数座標からの構築**
+
+コンストラクタは `double` を受け取るが、`ll`（`long long`）などの整数を渡しても暗黙変換されるのでそのまま使える。
+
+```cpp
+LL(ax, ay);              // ax, ay は ll 型
+Point a(ax, ay);         // OK。ax, ay は double に暗黙変換される
+```
+
+### 命名規則
+
+関数名の末尾は `_XY` や `_XYZ` のように、**引数の図形の種類を表す文字を、渡す順番通りに並べたもの**になっている。
+
+| 文字 | 意味 | 表現方法 |
+|---|---|---|
+| `p` | 点 (Point) | 1点 |
+| `l` | 直線 (Line) | 2点 `a1, a2` を通る、**両方向に無限に延びる**直線 |
+| `s` | 線分 (Segment) | 2点 `a1, a2` を端点とする、**そこで途切れる**線分 |
+| `c` | 円 (Circle) | 中心 `c` と半径 `r`（または `Circle` 構造体） |
+
+例えば `dist_lp(a1, a2, p)` は「`a1,a2`が表す**直線**」と「点`p`」の距離、`is_intersect_ss(a1, a2, b1, b2)` は「線分`a1-a2`」と「線分`b1-b2`」が交差するかどうかを表す。`dist_lc`/`dist_sc`/`dist_cc` のような円がらみの関数にも同じ規則が使われている（`c` = 円）。
+
+**`l`（直線）と`s`（線分）の違いに注意**
+
+同じ2点 `a1, a2` を渡していても、`l`系の関数はその2点を通る直線が両方向に無限に延びているとみなし、`s`系の関数はその2点そのものが端点だとみなす。そのため、**同じ入力でも`_ll`系と`_ss`系で結果が変わることがある**。
+
+例：
+
+```cpp
+Point a1(0, 0), a2(1, 0);   // x軸上、x=0〜1の線分
+Point b1(5, -1), b2(5, 1);  // x=5の垂直な線分（x=5, y=-1〜1）
+
+is_intersect_ll(a1, a2, b1, b2); // true  （直線同士はx=5で交わる）
+is_intersect_ss(a1, a2, b1, b2); // false （線分a1-a2はx=0〜1までしかなく、x=5に届かない）
+```
+
+つまり、
+
+- `l`系：「2点を通る無限の直線」として振る舞う（平行でなければほぼ必ず交わる・距離0になりやすい）
+- `s`系：「2点を端点とする実際の線分」として振る舞う（届かなければ交わらない・距離が0にならないことが多い）
+
+どちらを使うべきかは問題設定次第（例えば「レーザーが板を突き抜けるか」なら `l`、「実際に引かれた線分同士が交わるか」なら `s`）。
+
 ### 基本関数
 
 **`sgn` / `eq`**
@@ -83,11 +151,11 @@ int ccw(Point a, Point b, Point c);
 ### 交差判定
 
 ```cpp
-bool is_intersect_lp(Point a1, Point a2, Point p);
-bool is_intersect_ll(Point a1, Point a2, Point b1, Point b2);
-bool is_intersect_ls(Point a1, Point a2, Point b1, Point b2);
-bool is_intersect_ss(Point a1, Point a2, Point b1, Point b2);
-bool is_intersect_sp(Point a1, Point a2, Point p);
+bool is_intersect_lp(Point a1, Point a2, Point p);              // 直線と点
+bool is_intersect_ll(Point a1, Point a2, Point b1, Point b2);   // 直線と直線
+bool is_intersect_ls(Point a1, Point a2, Point b1, Point b2);   // 直線と線分
+bool is_intersect_ss(Point a1, Point a2, Point b1, Point b2);   // 線分と線分
+bool is_intersect_sp(Point a1, Point a2, Point p);              // 線分と点
 ```
 
 接する場合も交差とみなす。
